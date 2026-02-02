@@ -1,106 +1,181 @@
-# MORE-Markets
+# MORE Markets
 
-This repository contains the smart contracts source code and markets configuration for More Markets. It is base on the fork of Aave V3. The repository uses Docker Compose and Hardhat as development environment for compilation, testing and deployment tasks.
+A decentralized non-custodial liquidity protocol built on Aave V3, deployed on Flow EVM.
 
-## What is MORE Markets?
+```mermaid
+flowchart LR
+    subgraph Users
+        S[Suppliers]
+        B[Borrowers]
+    end
 
-MORE Markets is a decentralized non-custodial liquidity markets protocol where users can participate as suppliers or borrowers. Suppliers provide liquidity to the market to earn a passive income, while borrowers are able to borrow in an overcollateralized (perpetually) or undercollateralized (one-block liquidity) fashion.
+    subgraph Protocol["MORE Markets"]
+        P[Lending Pool]
+        O[Oracle]
+    end
 
-## Audits and Formal Verification
+    subgraph Assets
+        aT[aTokens]
+        dT[Debt Tokens]
+    end
 
-You can find all audit reports under the audits folder
-
-### Ordered by Aave
-
-V3.0.1 - December 2022
-
-- [PeckShield](./audits/Aave/09-12-2022_PeckShield_AaveV3-0-1.pdf)
-- [SigmaPrime](./audits/Aave/23-12-2022_SigmaPrime_AaveV3-0-1.pdf)
-
-V3 Round 1 - October 2021
-
-- [ABDK](./audits/Aave/27-01-2022_ABDK_AaveV3.pdf)
-- [OpenZeppelin](./audits/Aave/01-11-2021_OpenZeppelin_AaveV3.pdf)
-- [Trail of Bits](./audits/Aave/07-01-2022_TrailOfBits_AaveV3.pdf)
-- [Peckshield](./audits/Aave/14-01-2022_PeckShield_AaveV3.pdf)
-
-V3 Round 2 - December 2021
-
-- [SigmaPrime](./audits/Aave/27-01-2022_SigmaPrime_AaveV3.pdf)
-
-Formal Verification - November 2021-January 2022
-
-- [Certora](./certora/Aave_V3_Formal_Verification_Report_Jan2022.pdf)
-
-### Ordered by MORE
-
-V3.0.2 - December 2024
-
-- [PeckShield](./audits/MORE/PeckShield-Audit-Report-MOREMarkets-v1.0.pdf)
-
-## Getting Started
-
-You can install `@more-labs/more-markets` as an NPM package in your Hardhat or Truffle project to import the contracts and interfaces:
-
-`npm install @more-labs/more-markets`
-
-Import at Solidity files:
-
+    S -->|Supply| P
+    B -->|Borrow| P
+    P --> aT
+    P --> dT
+    O --> P
 ```
+
+## Overview
+
+MORE Markets enables users to:
+- **Supply** digital assets to earn interest
+- **Borrow** against collateral at variable rates
+- **Liquidate** undercollateralized positions
+
+The protocol is deployed on **Flow EVM Mainnet** with 9 supported markets.
+
+## Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Deployed Contracts](./docs/DEPLOYED_CONTRACTS.md) | All contract addresses by network |
+| [Markets Configuration](./docs/MARKETS_CONFIGURATION.md) | Risk parameters for each market |
+| [Architecture](./docs/ARCHITECTURE.md) | Protocol architecture and diagrams |
+
+## Supported Markets
+
+| Asset | Type | LTV | Liq. Threshold | Status |
+|-------|------|-----|----------------|--------|
+| WFLOW | Native | 81.50% | 83.00% | Active |
+| ankrFLOW | LST | 78.50% | 81.00% | Active |
+| WETH | Bridge | 80.00% | 83.00% | Active |
+| WBTC | Bridge | 73.00% | 78.00% | Frozen |
+| cbBTC | Bridge | 73.00% | 78.00% | Frozen |
+| USDF | Stablecoin | 75.00% | 79.25% | Active |
+| stgUSDC | Stablecoin | 75.00% | 78.00% | Active |
+| PYUSD0 | Stablecoin | 75.00% | 78.00% | Active |
+
+## Key Addresses (Flow EVM)
+
+| Contract | Address |
+|----------|---------|
+| Pool | [`0xbC92aaC2DBBF42215248B5688eB3D3d2b32F2c8d`](https://evm.flowscan.io/address/0xbC92aaC2DBBF42215248B5688eB3D3d2b32F2c8d) |
+| PoolDataProvider | [`0x79e71e3c0EDF2B88b0aB38E9A1eF0F6a230e56bf`](https://evm.flowscan.io/address/0x79e71e3c0EDF2B88b0aB38E9A1eF0F6a230e56bf) |
+| Oracle | [`0x7287f12c268d7Dff22AAa5c2AA242D7640041cB1`](https://evm.flowscan.io/address/0x7287f12c268d7Dff22AAa5c2AA242D7640041cB1) |
+| PoolAddressesProvider | [`0x1830a96466d1d108935865c75B0a9548681Cfd9A`](https://evm.flowscan.io/address/0x1830a96466d1d108935865c75B0a9548681Cfd9A) |
+
+See [Deployed Contracts](./docs/DEPLOYED_CONTRACTS.md) for the complete list.
+
+## Audits
+
+All audit reports are available in the [`audits/`](./audits/) directory.
+
+### Aave V3 (Base Protocol)
+
+| Auditor | Date | Report |
+|---------|------|--------|
+| ABDK | January 2022 | [View](./audits/Aave/27-01-2022_ABDK_AaveV3.pdf) |
+| OpenZeppelin | November 2021 | [View](./audits/Aave/01-11-2021_OpenZeppelin_AaveV3.pdf) |
+| Trail of Bits | January 2022 | [View](./audits/Aave/07-01-2022_TrailOfBits_AaveV3.pdf) |
+| PeckShield | January 2022 | [View](./audits/Aave/14-01-2022_PeckShield_AaveV3.pdf) |
+| SigmaPrime | January 2022 | [View](./audits/Aave/27-01-2022_SigmaPrime_AaveV3.pdf) |
+| Certora | January 2022 | [View](./certora/Aave_V3_Formal_Verification_Report_Jan2022.pdf) |
+| PeckShield (V3.0.1) | December 2022 | [View](./audits/Aave/09-12-2022_PeckShield_AaveV3-0-1.pdf) |
+| SigmaPrime (V3.0.1) | December 2022 | [View](./audits/Aave/23-12-2022_SigmaPrime_AaveV3-0-1.pdf) |
+
+### MORE Markets
+
+| Auditor | Date | Report |
+|---------|------|--------|
+| PeckShield | December 2024 | [View](./audits/MORE/PeckShield-Audit-Report-MOREMarkets-v1.0.pdf) |
+| Zenith | January 2025 | [View](./audits/MORE/MORE%20Markets%20-%20Zenith%20Audit%20Report.pdf) |
+
+## Integration
+
+### Installation
+
+```bash
+npm install @more-labs/more-markets
+```
+
+### Solidity
+
+```solidity
 import {IPool} from "@more-labs/more-markets/contracts/interfaces/IPool.sol";
 
-contract Misc {
+contract Integration {
+    IPool public constant POOL = IPool(0xbC92aaC2DBBF42215248B5688eB3D3d2b32F2c8d);
 
-  function supply(address pool, address token, address user, uint256 amount) public {
-    IPool(pool).supply(token, amount, user, 0);
-    {...}
-  }
+    function supply(address asset, uint256 amount) external {
+        IERC20(asset).approve(address(POOL), amount);
+        POOL.supply(asset, amount, msg.sender, 0);
+    }
+
+    function borrow(address asset, uint256 amount) external {
+        POOL.borrow(asset, amount, 2, 0, msg.sender);
+    }
 }
 ```
 
-The JSON artifacts with the ABI and Bytecode are also included in the bundled NPM package at `artifacts/` directory.
+### JavaScript
 
-Import JSON file via Node JS `require`:
+```javascript
+const PoolArtifact = require('@more-labs/more-markets/artifacts/contracts/protocol/pool/Pool.sol/Pool.json');
 
-```
-const PoolV3Artifact = require('@more-labs/more-markets/artifacts/contracts/protocol/pool/Pool.sol/Pool.json');
-
-// Log the ABI into console
-console.log(PoolV3Artifact.abi)
-```
-
-## Setup
-
-The repository uses Docker Compose to manage sensitive keys and load the configuration. Prior to any action like test or deploy, you must run `docker-compose up` to start the `contracts-env` container, and then connect to the container console via `docker-compose exec contracts-env bash`.
-
-Follow the next steps to setup the repository:
-
-- Install `docker` and `docker-compose`
-- Create an environment file named `.env` and fill the next environment variables
-
-```
-# Add Alchemy or Infura provider keys, alchemy takes preference at the config level
-ALCHEMY_KEY=""
-INFURA_KEY=""
-
-
-# Optional, if you plan to use Tenderly scripts
-TENDERLY_PROJECT=""
-TENDERLY_USERNAME=""
-
+const pool = new ethers.Contract(
+    '0xbC92aaC2DBBF42215248B5688eB3D3d2b32F2c8d',
+    PoolArtifact.abi,
+    signer
+);
 ```
 
-## Test
+## Development
 
-You can run the full test suite with the following commands:
+### Prerequisites
 
+- Docker and Docker Compose
+- Node.js 16+
+
+### Setup
+
+1. Clone the repository:
+```bash
+git clone https://github.com/MOREProtocol/MORE-Markets.git
+cd MORE-Markets
 ```
-# In one terminal
-docker-compose up
 
-# Open another tab or terminal
+2. Create environment file:
+```bash
+cp .env.example .env
+# Add your ALCHEMY_KEY or INFURA_KEY
+```
+
+3. Start development environment:
+```bash
+docker-compose up -d
 docker-compose exec contracts-env bash
-
-# A new Bash terminal is prompted, connected to the container
-npm run test
 ```
+
+### Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run compile` | Compile contracts |
+| `npm run test` | Run test suite |
+| `npm run coverage` | Generate coverage report |
+
+## Network Information
+
+### Flow EVM Mainnet
+
+| Parameter | Value |
+|-----------|-------|
+| Chain ID | 747 |
+| RPC | https://mainnet.evm.nodes.onflow.org |
+| Explorer | https://evm.flowscan.io |
+| Native Token | FLOW |
+
+## License
+
+This project is licensed under the BUSL-1.1 license. See [LICENSE](./LICENSE) for details.
